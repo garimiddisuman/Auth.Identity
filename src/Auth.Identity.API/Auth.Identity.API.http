@@ -1,6 +1,0 @@
-@Auth.Identity.API_HostAddress = http://localhost:5077
-
-GET {{Auth.Identity.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
