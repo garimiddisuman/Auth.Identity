@@ -1,11 +1,19 @@
 
 using Auth.Identity.API.Setup;
+using Auth.Identity.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 
 Console.WriteLine("Server Starting......");
 var builder = WebApplication.CreateBuilder(args);
 builder.ConfigureServices();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.ConfigureMiddleWare();
 
