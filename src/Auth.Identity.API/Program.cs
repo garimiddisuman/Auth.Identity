@@ -17,6 +17,12 @@ using (var scope = app.Services.CreateScope())
 
 app.ConfigureMiddleWare();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<Auth.Identity.Infrastructure.Database.AppDbContext>();
+    db.Database.Migrate();
+}
+
 Console.WriteLine("Server Started serving at http://localhost:3000");
 app.MapGet("/", () => "Hello World!");
 

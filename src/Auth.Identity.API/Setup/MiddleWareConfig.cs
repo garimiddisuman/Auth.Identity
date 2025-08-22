@@ -4,11 +4,11 @@ public static class MiddleWareConfig
 {
     public static void ConfigureMiddleWare(this WebApplication app)
     {
-        app.MapControllers();
-        app.UseCors();
-        app.UseRouting();
         app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseCors();
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.MapControllers();
     }
 }
