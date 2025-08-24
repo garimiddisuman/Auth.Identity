@@ -45,4 +45,5 @@ App_Data/
 
 # Others
 .env
-**/*/appsettings.json
+**/appsettings.json
+build_output/
