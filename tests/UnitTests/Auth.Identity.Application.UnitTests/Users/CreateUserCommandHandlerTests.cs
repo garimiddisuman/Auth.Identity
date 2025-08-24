@@ -1,14 +1,12 @@
-using System.ComponentModel.DataAnnotations;
 using Auth.Identity.Application.Exceptions;
+using Auth.Identity.Application.Users;
 using Auth.Identity.Domain.Users;
 using Auth.Identity.Domain.Users.Commands;
 using Auth.Identity.Infrastructure.Interfaces;
+using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Identity;
 using Moq;
 using Moq.AutoMock;
-using Auth.Identity.Application.Users;
-using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Shouldly;
 
 public class CreateUserCommandHandlerTests

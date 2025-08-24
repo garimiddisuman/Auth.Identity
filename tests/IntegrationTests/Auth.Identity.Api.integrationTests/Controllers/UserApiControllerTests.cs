@@ -1,14 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
-using Auth.Identity.Domain.Users;
 using Auth.Identity.Domain.Users.Commands;
 using Auth.Identity.Infrastructure.Database;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Xunit;
 
 namespace Auth.Identity.Api.integrationTests.Controllers;
 

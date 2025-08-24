@@ -2,8 +2,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace Auth.Identity.Application.Exceptions;
 
-public class ObjectAlreadyExistsException(string message) : Exception(message)
+public class ObjectAlreadyExistsException : Exception
 {
-    public int StatusCode { get; set; } = StatusCodes.Status409Conflict;
-    public string ErrorMessage { get; set; } = message;
+    public int StatusCode { get; private set; }
+    public string ErrorMessage { get; private set; }
+
+    public ObjectAlreadyExistsException(string message) : base(message)
+    {
+        StatusCode = StatusCodes.Status409Conflict;
+        ErrorMessage = message;
+    }
 }
