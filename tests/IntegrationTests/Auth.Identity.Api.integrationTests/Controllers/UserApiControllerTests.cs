@@ -30,7 +30,7 @@ public class UserApiControllerTests : IClassFixture<CustomWebApplicationFactory>
         var command = new CreateUserCommand { Name = "TestUser", Password = "TestPassword123" };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/User", command);
+        var response = await _client.PostAsJsonAsync("auth/register", command);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -52,8 +52,8 @@ public class UserApiControllerTests : IClassFixture<CustomWebApplicationFactory>
         var command = new CreateUserCommand { Name = "ExistingUser", Password = "TestPassword123" };
 
         // Act
-        var response1 = _client.PostAsJsonAsync("/User", command).Result;
-        var response2 = _client.PostAsJsonAsync("/User", command).Result;
+        var response1 = _client.PostAsJsonAsync("auth/register", command).Result;
+        var response2 = _client.PostAsJsonAsync("auth/register", command).Result;
 
         // Assert
         using (new AssertionScope())
@@ -76,7 +76,7 @@ public class UserApiControllerTests : IClassFixture<CustomWebApplicationFactory>
         var command = new CreateUserCommand { Name = name, Password = password };
 
         // Act
-        var response = _client.PostAsJsonAsync("/User", command).Result;
+        var response = _client.PostAsJsonAsync("auth/register", command).Result;
 
         // Assert
         using (new AssertionScope())
