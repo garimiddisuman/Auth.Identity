@@ -29,7 +29,7 @@ public static class MiddleWareConfig
             catch (ObjectAlreadyExistsException ex)
             {
                 context.Response.StatusCode = ex.StatusCode;
-                await context.Response.WriteAsync(ex.Message);
+                await context.Response.WriteAsync(ex.ErrorMessage);
             }
         });
     }

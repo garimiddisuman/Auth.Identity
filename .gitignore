@@ -47,3 +47,4 @@ App_Data/
 .env
 **/appsettings.json
 build_output/
+**/appsettings.Development.json

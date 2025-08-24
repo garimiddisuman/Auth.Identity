@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Auth.Identity.API.Controllers;
 
 [ApiController]
-[Route("User")]
+[Route("auth")]
 public class UserController(IMediator mediator) : ControllerBase
 {
-   [HttpPost]
+   [HttpPost("register")]
    public async Task<IActionResult> CreateUser([Required, FromBody] CreateUserCommand command)
    {
       return Created("/User", await mediator.Send(command));
