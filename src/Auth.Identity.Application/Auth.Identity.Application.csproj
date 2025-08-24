@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="HttpExceptions" Version="1.2.5" />
     <PackageReference Include="MediatR" Version="13.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Auth.Identity.Domain\Auth.Identity.Domain.csproj" />
+    <ProjectReference Include="..\Auth.Identity.Infrastructure\Auth.Identity.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
