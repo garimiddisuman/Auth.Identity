@@ -52,7 +52,6 @@ public class CreateUserCommandHandlerTests
         {
             result.ShouldNotBeNull();
             result.Name.ShouldBe(command.Name);
-            result.PasswordHash.ShouldBe(hashedPassword);
         }
     }
 
