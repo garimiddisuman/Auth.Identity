@@ -1,4 +1,7 @@
+using Auth.Identity.Domain.Users;
 using Auth.Identity.Infrastructure.Database;
+using Auth.Identity.Infrastructure.Interfaces;
+using Auth.Identity.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,5 +20,10 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString);
         });
+    }
+    
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IRepository<User>, UserRepository>();
     }
 }
