@@ -19,6 +19,11 @@ public class UserRepository(AppDbContext context) : IRepository<User>
         return await context.Users.AnyAsync(u => u.Name == user.Name, cancellationToken);
     }
 
+    public Task<User?> GetByNameAsync(string name, CancellationToken cancellationToken)
+    {
+        return context.Users.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
+    }
+
     // public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken)
     // {
     //     context.Users.Update(user);

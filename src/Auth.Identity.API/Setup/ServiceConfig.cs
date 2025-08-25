@@ -1,6 +1,7 @@
 using System.Reflection;
 using Auth.Identity.Application.Users;
 using Auth.Identity.Domain.Users.Commands;
+using Auth.Identity.Domain.Users;
 using Auth.Identity.Infrastructure;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -17,8 +18,11 @@ public static class ServiceConfig
         
         builder.Services.AddSwaggerGen();
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(CreateUserCommandHandler).Assembly));
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(LoginService).Assembly));
 
         builder.Services.AddCors();
+        builder.Services.AddSingleton<TokenService>(provider =>
+            new TokenService(builder.Configuration.GetConnectionString("jwt_secret")!));
         
         builder.Services.AddDb(
             builder.Configuration.GetConnectionString("dbString")!);
@@ -29,5 +33,6 @@ public static class ServiceConfig
         builder.Services.AddValidatorsFromAssembly(typeof(CreateUserCommandValidator).Assembly);
 
         builder.Services.AddScoped<PasswordHasher<CreateUserCommand>>();
+        builder.Services.AddScoped<PasswordHasher<User>>();
     }
 }

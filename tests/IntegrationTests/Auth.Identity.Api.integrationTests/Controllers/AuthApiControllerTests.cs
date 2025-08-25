@@ -9,12 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.Identity.Api.integrationTests.Controllers;
 
-public class UserApiControllerTests : IClassFixture<CustomWebApplicationFactory>
+public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
-    public UserApiControllerTests(CustomWebApplicationFactory factory)
+    public AuthApiControllerTests(CustomWebApplicationFactory factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();
