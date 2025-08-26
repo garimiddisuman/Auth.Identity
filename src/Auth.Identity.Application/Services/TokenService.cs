@@ -4,7 +4,7 @@ using System.Text;
 using Auth.Identity.Domain.Users;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Auth.Identity.Application.Users;
+namespace Auth.Identity.Application.Services;
 
 public class TokenService
 {
@@ -26,14 +26,12 @@ public class TokenService
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "your-app",
-            audience: "your-app",
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(_jwtLifespanMinutes),
-            signingCredentials: creds
+            signingCredentials: credentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);

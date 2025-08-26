@@ -15,12 +15,12 @@ public class AuthController(IMediator mediator) : ControllerBase
    {
       return Created("/User", await mediator.Send(command));
    }
-   
+
    [HttpPost("login")]
-   public async Task<IActionResult> LoginUser([Required,FromBody] UserLoginRequest command)
+   public async Task<IActionResult> LoginUser([Required, FromBody] LoginRequest command)
    {
-      var response = await mediator.Send(command) as LoginResponse;
-      
+      var response = await mediator.Send(command);
+
       HttpContext.Response.Cookies.Append("jwt", response!.Token, new CookieOptions
       {
          HttpOnly = true,
@@ -28,7 +28,7 @@ public class AuthController(IMediator mediator) : ControllerBase
          SameSite = SameSiteMode.Strict,
          Expires = DateTimeOffset.UtcNow.AddHours(1)
       });
-      
+
       return Ok(response);
    }
 }

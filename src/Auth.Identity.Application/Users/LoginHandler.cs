@@ -1,4 +1,5 @@
 using Auth.Identity.Application.Exceptions;
+using Auth.Identity.Application.Services;
 using Auth.Identity.Domain.Dto;
 using Auth.Identity.Domain.Users;
 using Auth.Identity.Infrastructure.Interfaces;
@@ -7,20 +8,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Auth.Identity.Application.Users;
 
-public class LoginService : IRequestHandler<UserLoginRequest, LoginResponse>
+public class LoginHandler : IRequestHandler<LoginRequest, LoginResponse>
 {
     private readonly IRepository<User> _usersRepo;
     private readonly PasswordHasher<User> _passwordHasher;
     private readonly TokenService _tokenService;
 
-    public LoginService(IRepository<User> usersRepo, PasswordHasher<User> passwordHasher, TokenService tokenService)
+    public LoginHandler(IRepository<User> usersRepo, PasswordHasher<User> passwordHasher, TokenService tokenService)
     {
         _usersRepo = usersRepo;
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
     }
 
-    public async Task<LoginResponse> Handle(UserLoginRequest request, CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
         var user = await _usersRepo.GetByNameAsync(request.Name, cancellationToken);
         if (user == null)

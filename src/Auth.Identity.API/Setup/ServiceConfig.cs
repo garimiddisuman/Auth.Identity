@@ -1,4 +1,5 @@
 using System.Reflection;
+using Auth.Identity.Application.Services;
 using Auth.Identity.Application.Users;
 using Auth.Identity.Domain.Users.Commands;
 using Auth.Identity.Domain.Users;
@@ -18,7 +19,7 @@ public static class ServiceConfig
         
         builder.Services.AddSwaggerGen();
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(CreateUserCommandHandler).Assembly));
-        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(LoginService).Assembly));
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(LoginHandler).Assembly));
 
         builder.Services.AddCors();
         builder.Services.AddSingleton<TokenService>(provider =>

@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Auth.Identity.Domain.Dto;
 
-public class UserLoginRequest:IRequest<LoginResponse>
+public class LoginRequest:IRequest<LoginResponse>
 {
     public string Name { get; set; } 
     public string Password { get; set; } 
