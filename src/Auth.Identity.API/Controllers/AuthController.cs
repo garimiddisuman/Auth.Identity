@@ -17,7 +17,7 @@ public class AuthController(IMediator mediator) : ControllerBase
    }
 
    [HttpPost("login")]
-   public async Task<IActionResult> LoginUser([Required, FromBody] LoginRequest command)
+   public async Task<IActionResult> LoginUser([Required, FromBody] UserLoginRequest command)
    {
       var response = await mediator.Send(command);
 

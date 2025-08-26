@@ -1,6 +1,6 @@
 namespace Auth.Identity.Domain.Dto;
 
-public class LoginResponse
+public class UserLoginResponse
 {
     public string Token { get; set; }
 }

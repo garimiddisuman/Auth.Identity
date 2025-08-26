@@ -8,20 +8,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Auth.Identity.Application.Users;
 
-public class LoginHandler : IRequestHandler<LoginRequest, LoginResponse>
+public class UserLoginHandler : IRequestHandler<UserLoginRequest, UserLoginResponse>
 {
     private readonly IRepository<User> _usersRepo;
     private readonly PasswordHasher<User> _passwordHasher;
     private readonly TokenService _tokenService;
 
-    public LoginHandler(IRepository<User> usersRepo, PasswordHasher<User> passwordHasher, TokenService tokenService)
+    public UserLoginHandler(IRepository<User> usersRepo, PasswordHasher<User> passwordHasher, TokenService tokenService)
     {
         _usersRepo = usersRepo;
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
     }
 
-    public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
+    public async Task<UserLoginResponse> Handle(UserLoginRequest request, CancellationToken cancellationToken)
     {
         var user = await _usersRepo.GetByNameAsync(request.Name, cancellationToken);
         if (user == null)
@@ -32,7 +32,7 @@ public class LoginHandler : IRequestHandler<LoginRequest, LoginResponse>
         ValidatePassword(user, request.Password, _passwordHasher);
         var token = _tokenService.GenerateToken(user);
 
-        return new LoginResponse() { Token = token };
+        return new UserLoginResponse() { Token = token };
     }
 
     private void ValidatePassword(User user, string password, PasswordHasher<User> passwordHasher)
