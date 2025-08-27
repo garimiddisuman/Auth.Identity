@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Auth.Identity.Domain.Dto;
 using Auth.Identity.Domain.Users.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Identity.API.Controllers;
@@ -30,5 +31,20 @@ public class AuthController(IMediator mediator) : ControllerBase
       });
 
       return Ok(response);
+   }
+
+   [HttpGet("me")]
+   [Authorize] // ✅ Only accessible if JWT is valid
+   public IActionResult GetCurrentUser()
+   {
+      var userId = User.FindFirst("sub")?.Value;
+      var username = User.FindFirst("unique_name")?.Value;
+
+      return Ok(new
+      {
+         message = "JWT is valid",
+         userId,
+         username
+      });
    }
 }

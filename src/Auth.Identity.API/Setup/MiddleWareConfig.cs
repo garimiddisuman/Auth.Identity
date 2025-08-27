@@ -8,11 +8,13 @@ public static class MiddleWareConfig
 {
     public static void ConfigureMiddleWare(this WebApplication app)
     {
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseCors();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseExceptionMiddleWare();
         app.MapControllers();
-        app.UseCors();
-        app.UseRouting();
-        app.UseHttpsRedirection();
         app.UseSwagger();
         app.UseSwaggerUI();
         app.ConfigureDb();

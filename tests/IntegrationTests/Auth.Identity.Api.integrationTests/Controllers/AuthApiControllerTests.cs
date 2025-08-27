@@ -81,7 +81,7 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
-    
+
     [Fact]
     public async Task LoginUser_ShouldReturnOk_WhenCredentialsAreValid()
     {
@@ -95,7 +95,10 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
         var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
     }
 
     [Fact]
@@ -111,7 +114,10 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
         var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
     }
 
     [Fact]
@@ -124,6 +130,68 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
         var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+    }
+
+    [Fact]
+    public async Task MeEndpoint_ReturnsClaims_WhenAuthorized()
+    {
+        // Arrange
+        var command = new CreateUserCommand { Name = "MeUser", Password = "TestPassword123" };
+        await _client.PostAsJsonAsync("auth/register", command);
+
+        var loginRequest = new { Name = "MeUser", Password = "TestPassword123" };
+        var loginResponse = await _client.PostAsJsonAsync("auth/login", loginRequest);
+
+        Assert.True(loginResponse.Headers.TryGetValues("Set-Cookie", out var setCookies));
+        var jwtCookie = setCookies.FirstOrDefault(c => c.StartsWith("jwt="));
+        Assert.NotNull(jwtCookie);
+
+        var token = jwtCookie.Split(';')[0].Replace("jwt=", "");
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "auth/me");
+        request.Headers.Add("Cookie", $"jwt={token}");
+
+        // Act
+        var meResponse = await _client.SendAsync(request);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            meResponse.EnsureSuccessStatusCode();
+        }
+    }
+
+
+    [Fact]
+    public async Task Me_ShouldReturnUnauthorized_WhenJwtIsInvalid()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "auth/me");
+        request.Headers.Add("Cookie", $"jwt=invalid.JWT.Token");
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+    }
+
+    [Fact]
+    public async Task Me_ShouldReturnUnauthorized_WhenNoJwtIsProvided()
+    {
+        // Act
+        var response = await _client.GetAsync("auth/me");
+
+        // Assert
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
     }
 }
