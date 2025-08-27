@@ -6,18 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Identity.Application.Services;
 
-public class TokenService
+public class TokenService(string jwtSecret)
 {
-    private readonly string _jwtSecret;
-    private readonly int _jwtLifespanMinutes;
-
-    public TokenService(string jwtSecret, int jwtLifespanMinutes = 60)
-    {
-        _jwtSecret = jwtSecret;
-        _jwtLifespanMinutes = jwtLifespanMinutes;
-    }
-
-    public string GenerateToken(User user)
+    public string GenerateToken(User user, int jwtLifetime = 5)
     {
         var claims = new[]
         {
@@ -25,12 +16,12 @@ public class TokenService
             new Claim(JwtRegisteredClaimNames.UniqueName, user.Name),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtLifespanMinutes),
+            expires: DateTime.UtcNow.AddMinutes(jwtLifetime),
             signingCredentials: credentials
         );
 

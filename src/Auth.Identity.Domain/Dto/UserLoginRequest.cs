@@ -2,8 +2,8 @@ using MediatR;
 
 namespace Auth.Identity.Domain.Dto;
 
-public class UserLoginRequest:IRequest<UserLoginResponse>
+public class UserLoginRequest : IRequest<UserLoginResponse>
 {
-    public string Name { get; set; } 
-    public string Password { get; set; } 
+    public required string Name { get; set; } 
+    public required string Password { get; set; } 
 }
