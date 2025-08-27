@@ -6,6 +6,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace Auth.Identity.Api.integrationTests.Controllers;
 
@@ -81,7 +82,7 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
-    
+
     [Fact]
     public async Task LoginUser_ShouldReturnOk_WhenCredentialsAreValid()
     {
@@ -93,9 +94,21 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
 
         // Act
         var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
+        var setCookies = response.Headers.GetValues("Set-Cookie");
+        var jwtCookieString = setCookies.FirstOrDefault(c => c.StartsWith("jwt="));
+        var jwtCookie = SetCookieHeaderValue.Parse(jwtCookieString);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            jwtCookie.Should().NotBeNull("because a successful login should set a jwt cookie");
+            jwtCookie!.Name.ToString().Should().Be("jwt", "cookie must be named jwt");
+            jwtCookie.HttpOnly.Should().BeTrue("cookie must be HttpOnly");
+            jwtCookie.Secure.Should().BeTrue("cookie must be Secure");
+            jwtCookie.SameSite.Should().Be(SameSiteMode.Strict, "cookie must have SameSite=Strict");
+            jwtCookie.Expires.Should().NotBeNull("cookie must have an expiration date");
+        }
     }
 
     [Fact]
@@ -125,5 +138,35 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task LogoutUser_ShouldRemoveJwtCookie_WhenCalled()
+    {
+        // Arrange: First log in to get a cookie
+        var command = new CreateUserCommand { Name = "LogoutUser", Password = "TestPassword123" };
+        await _client.PostAsJsonAsync("auth/register", command);
+        await _client.PostAsJsonAsync("auth/login", new { Name = "LogoutUser", Password = "TestPassword123" });
+
+        // Act: call logout
+        var response = await _client.PostAsync("auth/logout", null);
+        var setCookies = response.Headers.GetValues("Set-Cookie");
+        var jwtCookieString = setCookies.FirstOrDefault(c => c.StartsWith("jwt="));
+        var jwtCookie = SetCookieHeaderValue.Parse(jwtCookieString);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            jwtCookie.Should().NotBeNull("because logout should clear the jwt cookie");
+            jwtCookie!.Name.ToString().Should().Be("jwt", "cookie must still be named jwt");
+            jwtCookie.HttpOnly.Should().BeTrue("cookie must remain HttpOnly for security");
+            jwtCookie.Secure.Should().BeTrue("cookie must remain Secure");
+            jwtCookie.SameSite.Should().Be(SameSiteMode.Strict, "cookie must keep SameSite=Strict");
+            jwtCookie.Expires.Should().NotBeNull("cookie must be expired to be removed");
+            jwtCookieString.Should().Contain("path=/", "cookie path must be root to override previous cookie");
+            jwtCookie.Expires.Should().BeBefore(DateTimeOffset.UtcNow, "logout must expire the cookie so the browser deletes it");
+        }
     }
 }
