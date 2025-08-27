@@ -8,7 +8,7 @@ namespace Auth.Identity.Application.Services;
 
 public class TokenService(string jwtSecret)
 {
-    public string GenerateToken(User user, int jwtLifetime = 5)
+    public string GenerateToken(User user, int jwtLifetime = 1)
     {
         var claims = new[]
         {
@@ -20,8 +20,10 @@ public class TokenService(string jwtSecret)
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
+            issuer: "http://localhost:3000",
+            audience: "http://localhost:3000",
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(jwtLifetime),
+            expires: DateTime.UtcNow.AddMinutes(1),
             signingCredentials: credentials
         );
 
