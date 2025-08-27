@@ -118,7 +118,7 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
     public async Task LoginUser_ShouldReturnObjectNotFound_WhenUserDoesNotExist()
     {
         // Arrange
-        var loginRequest = new { Name = "AnotherUser", Password = "WrongPassword" };
+        var loginRequest = new { Name = "AnotherUser-404", Password = "WrongPassword" };
 
         // Act
         var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
