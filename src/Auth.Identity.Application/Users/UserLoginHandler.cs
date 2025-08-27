@@ -40,7 +40,7 @@ public class UserLoginHandler : IRequestHandler<UserLoginRequest, UserLoginRespo
         var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
         if (result == PasswordVerificationResult.Failed)
         {
-            throw new InvalidPasswordException("Invalid password");
+            throw new UnauthorizedException("Invalid password");
         }
     }
 }

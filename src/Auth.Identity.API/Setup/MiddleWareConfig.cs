@@ -26,7 +26,7 @@ public static class MiddleWareConfig
             {
                 await next(context);
             }
-            catch (ObjectAlreadyExistsException ex)
+            catch (MyException ex)
             {
                 context.Response.StatusCode = ex.StatusCode;
                 await context.Response.WriteAsync(ex.ErrorMessage);
