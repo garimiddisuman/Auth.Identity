@@ -81,4 +81,49 @@ public class AuthApiControllerTests : IClassFixture<CustomWebApplicationFactory>
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
+    
+    [Fact]
+    public async Task LoginUser_ShouldReturnOk_WhenCredentialsAreValid()
+    {
+        // Arrange
+        var command = new CreateUserCommand { Name = "LoginUser", Password = "TestPassword123" };
+        await _client.PostAsJsonAsync("auth/register", command);
+
+        var loginRequest = new { Name = "LoginUser", Password = "TestPassword123" };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task LoginUser_ShouldReturnUnauthorized_WhenCredentialsAreInvalid()
+    {
+        // Arrange
+        var command = new CreateUserCommand { Name = "AnotherUser", Password = "TestPassword123" };
+        await _client.PostAsJsonAsync("auth/register", command);
+
+        var loginRequest = new { Name = "AnotherUser", Password = "WrongPassword" };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task LoginUser_ShouldReturnObjectNotFound_WhenUserDoesNotExist()
+    {
+        // Arrange
+        var loginRequest = new { Name = "AnotherUser", Password = "WrongPassword" };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("auth/login", loginRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }
