@@ -46,5 +46,19 @@ public class AuthController(IMediator mediator) : ControllerBase
          userId,
          username
       });
+
+   [HttpPost("logout")]
+   public IActionResult LogoutUser()
+   {
+      HttpContext.Response.Cookies.Append("jwt", string.Empty, new CookieOptions
+      {
+         HttpOnly = true,
+         Secure = true,
+         SameSite = SameSiteMode.Strict,
+         Path = "/",
+         Expires = DateTimeOffset.UtcNow.AddDays(-1)
+      });
+      
+      return Ok(new { message = "Logged out successfully" });
    }
 }
